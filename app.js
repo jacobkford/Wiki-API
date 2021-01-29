@@ -1,9 +1,10 @@
+require("dotenv").config();
 const path = require("path");
 const express = require("express");
 const settings = require(path.resolve(__dirname + "/config/settings"));
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = settings.port || 3000;
 
 require(path.resolve(__dirname + "/config/database"))(settings);
 require(path.resolve(__dirname + "/config/server"))(app);
