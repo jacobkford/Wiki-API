@@ -1,23 +1,12 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const ejs = require("ejs");
 const path = require("path");
+const express = require("express");
+const settings = require(path.resolve(__dirname + "/config/settings"));
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.set("view engine", "ejs");
-
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
-
-mongoose.connect("mongodb://localhost:27017/wikiDB", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-}, () => {
-    console.log(`[ DATABASE]: We are ${mongoose.STATES[mongoose.connection.readyState]}.`);
-});
-
+require(path.resolve(__dirname + "/config/database"))(settings);
+require(path.resolve(__dirname + "/config/server"))(app);
 require(path.resolve(__dirname + "/routes/routes"))(app);
 
 app.listen(port, () => {

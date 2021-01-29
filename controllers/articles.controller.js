@@ -1,8 +1,8 @@
-const article = require("../models/article");
+const Article = require("../models/article");
 
 module.exports = {
   articlesGet: (req, res) => {
-    article.find((err, docs) => {
+    Article.find((err, docs) => {
       if (err) {
         console.error(err);
         res.send(err);
@@ -13,7 +13,7 @@ module.exports = {
   },
 
   articlesPost: (req, res) => {
-    const newArticle = new article({
+    const newArticle = new Article({
       title: req.body.title,
       content: req.body.content,
     });
@@ -29,7 +29,7 @@ module.exports = {
   },
 
   articlesDelete: (req, res) => {
-    article.deleteMany((err) => {
+    Article.deleteMany((err) => {
       if (err) {
         console.error(err);
         res.send(err);
