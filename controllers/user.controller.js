@@ -3,24 +3,26 @@ const User = require("../models/user");
 
 module.exports = {
   getOne: (req, res) => {
-    User.findById(req.params.userId, (err, result) => {
+    User.findById(req.params.userId, (err, user) => {
       if (err) {
         console.error(err);
       } else {
-        if (result) {
-          res.send("Successfully found user: " + result.email);
+        if (user) {
+          res.send("Successfully found user: " + user);
+        } else {
+          res.status(404).send("Could not find user.");
         }
       }
     });
   },
 
   getMany: (req, res) => {
-    User.find((err, docs) => {
+    User.find((err, users) => {
       if (err) {
         console.error(err);
         res.send(err);
       } else {
-        res.send(docs);
+        res.send(users);
       }
     });
   },
@@ -67,36 +69,51 @@ module.exports = {
     );
   },
 
-  patchOne: (req, res) => {
-    let user = User.findOne({ _id: req.params.userId }, (err, result) => {
-      if (err) {
-        console.error(err);
-        res.send(err);
-      }
-      if (result) {
-        return result;
-      } else {
-        res.send("Could not find user");
-      }
-    });
+  patchOne: async (req, res) => {
+    let user = await User.findById(req.params.userId).exec();
 
-    console.log(user);
-
+    if (!user) {
+      res.status(404).send("User not found.");
+    }
     if (req.body.password) {
-      console.log("Password request");
+      if (req.body.password !== md5(user.password)) {
+        res.send("Incorrect password provided.");
+      } else {
+        User.updateOne(
+          { _id: req.params.userId },
+          { password: md5(req.body.newPassword) },
+          (err) => {
+            if (err) {
+              console.error(err);
+              res.send(err);
+            } else {
+              res.send("Successfully updated user password.");
+            }
+          }
+        );
+      }
+    } else {
+      User.updateOne({ _id: req.params.userId }, { $set: req.body }, (err) => {
+        if (err) {
+          console.error(err);
+          res.send(err);
+        } else {
+          res.send("Successfully updated User.");
+        }
+      });
     }
   },
 
   deleteOne: (req, res) => {
-    User.findById(req.params.userId, (err, result) => {
+    User.findById(req.params.userId, (err, user) => {
       if (err) {
         console.error(err);
         res.send(err);
       }
-      if (!result) {
+      if (!user) {
         res.send("No users found matching that id.");
       } else {
-        if (md5(result.password) === req.body.password) {
+        if (md5(user.password) === req.body.password) {
           User.deleteOne({ _id: req.params.userId }, (err) => {
             if (err) {
               console.error(err);
@@ -106,10 +123,12 @@ module.exports = {
             }
           });
         } else {
-          res.send("Error. You must provide the correct password for this user.");
+          res.send(
+            "Error. You must provide the correct password for this user."
+          );
         }
-      } 
-    }) 
+      }
+    });
   },
 
   deleteMany: (req, res) => {
