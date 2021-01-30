@@ -29,13 +29,13 @@ module.exports = {
 
   postOne: (req, res) => { 
     const newUser = new User({
-      email: req.body.username,
+      email: req.body.email,
       password: md5(req.body.password),
     });
 
     newUser.save((err) => {
       if (err) {
-        console.err(err);
+        console.error(err);
         res.send(err);
       } else {
         res.send("User has been created!");
