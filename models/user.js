@@ -1,7 +1,20 @@
 const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema({
-  email: String,
-  password: String,
+  email: {
+    type: String,
+    required: true,
+    trim: true,
+    lowercase: true,
+    unique: true,
+    match: [/^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/, "Please fill a valid email address"]
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  registeredAt: {
+    type: Date,
+  },
 });
 module.exports = mongoose.model("User", userSchema);

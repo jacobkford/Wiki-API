@@ -7,7 +7,7 @@ module.exports = (app) => {
   app
     .route("/articles")
     .get(controllers.articleController.getMany)
-    .post(controllers.articleController.postMany)
+    .post(controllers.articleController.postOne)
     .delete(controllers.articleController.deleteMany);
 
   /**
@@ -26,7 +26,7 @@ module.exports = (app) => {
   app
     .route("/users")
     .get(controllers.userController.getMany)
-    .post(controllers.userController.postMany)
+    .post(controllers.userController.postOne)
     .delete(controllers.userController.deleteMany);
 
   /**

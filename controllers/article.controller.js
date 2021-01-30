@@ -26,7 +26,7 @@ module.exports = {
     });
   },
 
-  postMany: (req, res) => {
+  postOne: (req, res) => {
     const newArticle = new Article({
       title: req.body.title,
       content: req.body.content,
