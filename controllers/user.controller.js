@@ -3,14 +3,12 @@ const User = require("../models/user");
 
 module.exports = {
   getOne: (req, res) => {
-    User.findOne({ email: req.body.username }, (err, result) => {
+    User.findById(req.params.userId, (err, result) => {
       if (err) {
         console.error(err);
       } else {
         if (result) {
-          if (result.password === md5(req.body.password)) {
-            res.send("Successfully found user: " + result);
-          }
+          res.send("Successfully found user: " + result.email); 
         }
       }
     });
@@ -27,7 +25,7 @@ module.exports = {
     });
   },
 
-  postOne: (req, res) => { 
+  postOne: (req, res) => {
     const newUser = new User({
       email: req.body.email,
       password: md5(req.body.password),
@@ -40,15 +38,37 @@ module.exports = {
       } else {
         res.send("User has been created!");
       }
-    })
+    });
   },
-  
-  putOne: (req, res) => { },
-  
-  patchOne: (req, res) => { },
-  
-  deleteOne: (req, res) => { },
-  
-  deleteMany: (req, res) => { },
-  
+
+  putOne: (req, res) => {},
+
+  patchOne: (req, res) => {},
+
+  deleteOne: (req, res) => {
+    User.findById(req.params.userId, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.send(err);
+      }
+      if (!result) {
+        res.send("No users found matching that id.");
+      } else {
+        if (md5(result.password) === req.body.password) {
+          User.deleteOne({ _id: req.params.userId }, (err) => {
+            if (err) {
+              console.error(err);
+              res.send(err);
+            } else {
+              res.send("Successfully deleted User!");
+            }
+          });
+        } else {
+          res.send("Error. You must provide the correct password for this user.");
+        }
+      } 
+    }) 
+  },
+
+  deleteMany: (req, res) => {},
 };
