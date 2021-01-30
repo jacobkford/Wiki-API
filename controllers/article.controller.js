@@ -1,7 +1,7 @@
 const Article = require("../models/article");
 
 module.exports = {
-  articleGet: (req, res) => {
+  getOne: (req, res) => {
     Article.findOne({ title: req.params.articleTitle }, (err, result) => {
       if (err) {
         console.error(err);
@@ -15,12 +15,39 @@ module.exports = {
     });
   },
 
-  articlePut: (req, res) => {
+  getMany: (req, res) => {
+    Article.find((err, docs) => {
+      if (err) {
+        console.error(err);
+        res.send(err);
+      } else {
+        res.send(docs);
+      }
+    });
+  },
+
+  postMany: (req, res) => {
+    const newArticle = new Article({
+      title: req.body.title,
+      content: req.body.content,
+    });
+
+    newArticle.save((err) => {
+      if (err) {
+        console.error(err);
+        res.send(err);
+      } else {
+        res.send("Successfully added a new article.");
+      }
+    });
+  },
+
+  putOne: (req, res) => {
     Article.updateOne(
       // Finds the Article that wants updating.
       { title: req.params.articleTitle },
       // Updated Article data parameters.
-      { title: req.body.title, content: req.body.content,},
+      { title: req.body.title, content: req.body.content },
       // Overwrites original data with the new data.
       { overwrite: true },
       (err) => {
@@ -34,7 +61,7 @@ module.exports = {
     );
   },
 
-  articlePatch: (req, res) => {
+  patchOne: (req, res) => {
     Article.updateOne(
       // Finds the Article that wants updating.
       { title: req.params.articleTitle },
@@ -51,7 +78,7 @@ module.exports = {
     );
   },
 
-  articleDelete: (req, res) => {
+  deleteOne: (req, res) => {
     Article.deleteOne({ title: req.params.articleTitle }, (err, result) => {
       if (err) {
         console.error(err);
@@ -61,6 +88,17 @@ module.exports = {
         res.send(result);
       } else {
         res.send("No articles matching that title was found.");
+      }
+    });
+  },
+
+  deleteMany: (req, res) => {
+    Article.deleteMany((err) => {
+      if (err) {
+        console.error(err);
+        res.send(err);
+      } else {
+        res.send("Successfully deleted all articles.");
       }
     });
   },

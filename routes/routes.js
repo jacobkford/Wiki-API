@@ -6,23 +6,42 @@ module.exports = (app) => {
    */
   app
     .route("/articles")
-    .get(controllers.articlesController.articlesGet)
-    .post(controllers.articlesController.articlesPost)
-    .delete(controllers.articlesController.articlesDelete);
+    .get(controllers.articleController.getMany)
+    .post(controllers.articleController.postMany)
+    .delete(controllers.articleController.deleteMany);
 
   /**
    * Requests Targeting a specific Article.
    */
   app
     .route("/articles/:articleTitle")
-    .get(controllers.specificController.articleGet)
-    .put(controllers.specificController.articlePut)
-    .patch(controllers.specificController.articlePatch)
-    .delete(controllers.specificController.articleDelete);
+    .get(controllers.articleController.getOne)
+    .put(controllers.articleController.putOne)
+    .patch(controllers.articleController.patchOne)
+    .delete(controllers.articleController.deleteOne);
+
+  /**
+   * Requests Targeting the all Users.
+   */
+  app
+    .route("/users")
+    .get(controllers.userController.getMany)
+    .post(controllers.userController.postMany)
+    .delete(controllers.userController.deleteMany);
+
+  /**
+   * Requests Targeting a specific User.
+   */
+  app
+    .route("/users/:userId")
+    .get(controllers.userController.getOne)
+    .put(controllers.userController.putOne)
+    .patch(controllers.userController.patchOne)
+    .delete(controllers.userController.deleteMany);
 
   /**
    * Handling error page.
-  */
+   */
   app.all("*", (req, res) => {
     res.status(404);
     res.send("404 Not Found!");

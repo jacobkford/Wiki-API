@@ -1,7 +1,7 @@
-const articlesController = require("./articles.controller");
-const specificController = require("./specificArticle.controller")
+const articleController = require("./article.controller");
+const userController = require("./user.controller");
 
 module.exports = {
-    articlesController: articlesController,
-    specificController: specificController,
-}
+  articleController: articleController,
+  userController: userController,
+};
