@@ -8,7 +8,7 @@ module.exports = {
         console.error(err);
       } else {
         if (result) {
-          res.send("Successfully found user: " + result.email); 
+          res.send("Successfully found user: " + result.email);
         }
       }
     });
@@ -41,9 +41,51 @@ module.exports = {
     });
   },
 
-  putOne: (req, res) => {},
+  putOne: (req, res) => {
+    User.updateOne(
+      // Finds the User that wants updating.
+      { _id: req.params.userId },
+      // Updated User parameters
+      {
+        email: req.body.email,
+        password: md5(req.body.password),
+        name: {
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+        },
+      },
+      // Overwrites original data with the new data.
+      { overwrite: true },
+      (err) => {
+        if (err) {
+          console.error(err);
+          res.send(err);
+        } else {
+          res.send("Successfully updated user.");
+        }
+      }
+    );
+  },
 
-  patchOne: (req, res) => {},
+  patchOne: (req, res) => {
+    let user = User.findOne({ _id: req.params.userId }, (err, result) => {
+      if (err) {
+        console.error(err);
+        res.send(err);
+      }
+      if (result) {
+        return result;
+      } else {
+        res.send("Could not find user");
+      }
+    });
+
+    console.log(user);
+
+    if (req.body.password) {
+      console.log("Password request");
+    }
+  },
 
   deleteOne: (req, res) => {
     User.findById(req.params.userId, (err, result) => {
@@ -70,5 +112,14 @@ module.exports = {
     }) 
   },
 
-  deleteMany: (req, res) => {},
+  deleteMany: (req, res) => {
+    User.deleteMany((err) => {
+      if (err) {
+        console.error(err);
+        res.send(err);
+      } else {
+        res.send("Successfully deleted all articles.");
+      }
+    });
+  },
 };
