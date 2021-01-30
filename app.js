@@ -7,7 +7,7 @@ const log = require(path.resolve(__dirname + "/config/loggers"));
 const app = express();
 
 require(path.resolve(__dirname + "/config/database"))(settings);
-require(path.resolve(__dirname + "/config/server"))(app);
+require(path.resolve(__dirname + "/config/server"))(express, app);
 require(path.resolve(__dirname + "/routes/routes"))(app);
 
-app.listen(settings.port, log.listenerLog);
+app.listen(settings.port, log.listener);

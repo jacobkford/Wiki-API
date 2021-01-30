@@ -5,5 +5,5 @@ module.exports = (settings) => {
     mongoose.connect(settings.db, {
         useNewUrlParser: true,
         useUnifiedTopology: true,
-    }, log.databaseLog);
+    }, log.database);
 }

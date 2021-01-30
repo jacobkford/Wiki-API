@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 module.exports = {
 
-    listenerLog: () => {
+    listener: () => {
         console.log("%c-----------", 'color: blue; font-weight: bold;');
         console.log(`%c[   SERVER]: Express is ready!`, 'color: blue; font-weight: bold;');
         console.log(`%c[     PORT]: Listening on port ${settings.port}.`, 'color: blue; font-weight: bold;');
@@ -11,7 +11,7 @@ module.exports = {
         console.log(`%c[BOOT TIME]: ${process.uptime() * 1000}ms`, 'color: blue; font-weight: bold;');
     },
 
-    databaseLog: () => {
+    database: () => {
         console.log(`%c[ DATABASE]: We are ${mongoose.STATES[mongoose.connection.readyState]}.`, 'color: blue; font-weight: bold;');
     }
 };
