@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt"); 
+const passport = require("passport");
 const User = require("../models/user");
 
 module.exports = {
@@ -18,6 +19,7 @@ module.exports = {
   },
 
   getLogout: (req, res) => {
+    console.log(req.session);
     req.logout();
   },
 
@@ -38,7 +40,7 @@ module.exports = {
       if (err) {
         res.send(err);
       } else {
-        passport.authenticate("local")(req, res, () => {
+        passport.authenticate("local", (req, res) => {
           res.send("Successfully created user.");
         });
       }
@@ -54,8 +56,9 @@ module.exports = {
     req.login(user, (err) => {
       if (err) {
         console.error(err);
+        res.send(err);
       } else {
-        passport.authenticate("local")(req, res, () => {
+        passport.authenticate("local", (req, res) => {
           res.send("Successfully created user.");
         });
       }

@@ -11,13 +11,16 @@ module.exports = (express, app) => {
     app.use(morgan("dev"));
     app.use(cors());
     app.use(express.urlencoded({ extended: true }));
-    app.use(express.static("public"));
     app.use(compression());
     app.use(session({
         secret: "abcdefg1234567",
         resave: false,
         saveUninitialized: false,
+        cookie: {
+            secure: false,
+        }
     }));
     app.use(passport.initialize());
     app.use(passport.session());
+    app.use(express.static("public"));
 }
