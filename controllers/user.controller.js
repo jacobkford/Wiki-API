@@ -1,4 +1,4 @@
-const md5 = require("md5");
+const bcrypt = require("bcrypt"); 
 const User = require("../models/user");
 
 module.exports = {
@@ -28,70 +28,98 @@ module.exports = {
   },
 
   postOne: (req, res) => {
-    const newUser = new User({
-      email: req.body.email,
-      password: md5(req.body.password),
-    });
-
-    newUser.save((err) => {
+    bcrypt.hash(req.body.password, 10, (err, hash) => {
       if (err) {
         console.error(err);
         res.send(err);
-      } else {
-        res.send("User has been created!");
       }
-    });
-  },
 
-  putOne: (req, res) => {
-    User.updateOne(
-      // Finds the User that wants updating.
-      { _id: req.params.userId },
-      // Updated User parameters
-      {
+      const newUser = new User({
         email: req.body.email,
-        password: md5(req.body.password),
-        name: {
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-        },
-      },
-      // Overwrites original data with the new data.
-      { overwrite: true },
-      (err) => {
+        password: hash,
+      });
+
+      newUser.save((err) => {
         if (err) {
           console.error(err);
           res.send(err);
         } else {
-          res.send("Successfully updated user.");
+          res.send("User has been created!");
         }
+      });
+    });
+  },
+
+  putOne: (req, res) => {
+    bcrypt.hash(req.body.password, 10, (err, hash) => {
+      if (err) {
+        console.error(err);
+        res.send(err);
       }
-    );
+
+      User.updateOne(
+        // Finds the User that wants updating.
+        { _id: req.params.userId },
+        // Updated User parameters
+        {
+          email: req.body.email,
+          password: hash,
+          name: {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+          },
+        },
+        // Overwrites original data with the new data.
+        { overwrite: true },
+        (err) => {
+          if (err) {
+            console.error(err);
+            res.send(err);
+          } else {
+            res.send("Successfully updated user.");
+          }
+        }
+      );
+    });
   },
 
   patchOne: async (req, res) => {
     let user = await User.findById(req.params.userId).exec();
-
     if (!user) {
       res.status(404).send("User not found.");
     }
+
     if (req.body.password) {
-      if (req.body.password !== md5(user.password)) {
-        res.send("Incorrect password provided.");
-      } else {
-        User.updateOne(
-          { _id: req.params.userId },
-          { password: md5(req.body.newPassword) },
-          (err) => {
+      bcrypt.compare(req.body.password, user.password, (err, result) => {
+        if (err) {
+          console.error(err);
+          res.send(err);
+        }
+
+        if (result) {
+          bcrypt.hash(req.body.newPassword, 10, (err, hash) => {
             if (err) {
               console.error(err);
               res.send(err);
-            } else {
-              res.send("Successfully updated user password.");
             }
-          }
-        );
-      }
+
+            User.updateOne(
+              { _id: req.params.userId },
+              { password: hash },
+              (err) => {
+                if (err) {
+                  console.error(err);
+                  res.send(err);
+                } else {
+                  res.send("Successfully updated user password.");
+                }
+              }
+            );
+          });
+        } else {
+        res.send("Error. You must provide the correct password for this user.");
+        } 
+      });
     } else {
       User.updateOne({ _id: req.params.userId }, { $set: req.body }, (err) => {
         if (err) {
@@ -104,29 +132,29 @@ module.exports = {
     }
   },
 
-  deleteOne: (req, res) => {
-    User.findById(req.params.userId, (err, user) => {
+  deleteOne: async (req, res) => {
+    let user = await User.findById(req.params.userId).exec();
+    if (!user) {
+      res.status(404).send("User not found.");
+    }
+
+    bcrypt.compare(req.body.password, user.password, (err, result) => {
       if (err) {
-        console.error(err);
-        res.send(err);
-      }
-      if (!user) {
-        res.send("No users found matching that id.");
-      } else {
-        if (md5(user.password) === req.body.password) {
-          User.deleteOne({ _id: req.params.userId }, (err) => {
-            if (err) {
-              console.error(err);
-              res.send(err);
-            } else {
-              res.send("Successfully deleted User!");
-            }
-          });
-        } else {
-          res.send(
-            "Error. You must provide the correct password for this user."
-          );
+          console.error(err);
+          res.send(err);
         }
+
+      if (result) {
+        User.deleteOne({ _id: req.params.userId }, (err) => {
+          if (err) {
+            console.error(err);
+            res.send(err);
+          } else {
+            res.send("Successfully deleted User!");
+          }
+        });
+      } else {
+        res.send("Error. You must provide the correct password for this user.");
       }
     });
   },
