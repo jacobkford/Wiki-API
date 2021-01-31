@@ -2,23 +2,27 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 
 module.exports = {
-  /*
-   *  Get request for one user.
+  /**
+   * Get request for one user.
    */
   getOne: (req, res) => {
     User.findById(req.params.userId, (err, user) => {
       if (err) res.send(err);
-      
+
       if (user) {
-        res.send("Successfully found user: " + user);
+        res.send(user);
       } else {
         res.status(404).send("Could not find user.");
       }
     });
   },
 
-  /*
-   *  Get request for all users.
+  getLogout: (req, res) => {
+    req.logout();
+  },
+
+  /**
+   * Get request for all users.
    */
   getMany: (req, res) => {
     User.find((err, users) => {
@@ -26,26 +30,40 @@ module.exports = {
     });
   },
 
-  /*
-   *  Post request for one user.
+  /**
+   * Post request for one user.
    */
-  postOne: (req, res) => {
-    bcrypt.hash(req.body.password, 10, (err, hash) => {
-      if (err) res.send(err);
-
-      const newUser = new User({
-        email: req.body.email,
-        password: hash,
-      });
-
-      newUser.save((err) => {
-        res.send(err ? err : "User has been created!");
-      });
+  postRegister: (req, res) => {
+    User.register({ username: req.body.email }, req.body.password, (err) => {
+      if (err) {
+        res.send(err);
+      } else {
+        passport.authenticate("local")(req, res, () => {
+          res.send("Successfully created user.");
+        });
+      }
     });
   },
 
-  /*
-   *Put request for one user. (UPDATES ALL OF THE USERS DATA)
+  postLogin: (req, res) => {
+    const user = new User({
+      username: req.body.username,
+      password: req.body.password,
+    });
+
+    req.login(user, (err) => {
+      if (err) {
+        console.error(err);
+      } else {
+        passport.authenticate("local")(req, res, () => {
+          res.send("Successfully created user.");
+        });
+      }
+    });
+  },
+
+  /**
+   * Put request for one user. (UPDATES ALL OF THE USERS DATA)
    */
   putOne: (req, res) => {
     bcrypt.hash(req.body.password, 10, (err, hash) => {
@@ -72,22 +90,22 @@ module.exports = {
     });
   },
 
-  /*
-   *Patch request for one user. (UPDATES ONLY ONE PIECE OF THE USERS DATA)
+  /**
+   * Patch request for one user. (UPDATES ONLY ONE PIECE OF THE USERS DATA)
    */
   patchOne: async (req, res) => {
     let user = await User.findById(req.params.userId).exec();
     if (!user) res.status(404).send("User not found.");
-    
+
     // If patch is a password.
     if (req.body.password) {
       bcrypt.compare(req.body.password, user.password, (err, result) => {
         if (err) res.send(err);
-        
+
         if (result) {
           bcrypt.hash(req.body.newPassword, 10, (err, hash) => {
             if (err) res.send(err);
-          
+
             User.updateOne(
               { _id: req.params.userId },
               { password: hash },
@@ -108,28 +126,21 @@ module.exports = {
     }
   },
 
-  /*
-   *Delete request for one user.
+  /**
+   * Delete request for one user.
    */
   deleteOne: async (req, res) => {
-    let user = await User.findById(req.params.userId).exec();
-    if (!user) res.status(404).send("User not found.");
-    
-    bcrypt.compare(req.body.password, user.password, (err, result) => {
-      if (err) res.send(err);
-      
-      if (result) {
-        User.deleteOne({ _id: req.params.userId }, (err) => {
-          res.send(err ? err : "Successfully deleted User!");
-        });
-      } else {
-        res.send("You must provide the correct password for this user.");
-      }
-    });
+    if (req.isAuthenticated()) {
+      User.deleteOne({ _id: req.params.userId }, (err) => {
+        res.send(err ? err : "Successfully deleted User!");
+      })
+    } else {
+      res.status(404).send("Authorization denied.");
+    }
   },
 
-  /*
-   *Delete request for all users.
+  /**
+   * Delete request for all users.
    */
   deleteMany: (req, res) => {
     User.deleteMany((err) => {

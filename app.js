@@ -9,5 +9,6 @@ const app = express();
 require(path.resolve(__dirname + "/config/database"))(settings);
 require(path.resolve(__dirname + "/config/server"))(express, app);
 require(path.resolve(__dirname + "/routes/routes"))(app);
+require(path.resolve(__dirname + "/config/passport"))();
 
 app.listen(settings.port, log.listener);
