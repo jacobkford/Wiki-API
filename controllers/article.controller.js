@@ -2,27 +2,16 @@ const Article = require("../models/article");
 
 module.exports = {
   getOne: (req, res) => {
-    Article.findOne({ title: req.params.articleTitle }, (err, result) => {
-      if (err) {
-        console.error(err);
-        res.send(err);
-      }
-      if (result) {
-        res.send(result);
-      } else {
-        res.send("No articles matching that title was found.");
-      }
+    Article.findOne({ title: req.params.articleTitle }, (err, article) => {
+      if (err) res.send(err);
+      res.send(article ? article : "Could not find article.");
     });
   },
 
   getMany: (req, res) => {
-    Article.find((err, docs) => {
-      if (err) {
-        console.error(err);
-        res.send(err);
-      } else {
-        res.send(docs);
-      }
+    Article.find((err, article) => {
+      if (err) res.send(err);
+      res.send(article ? article : "Could not find any articles.")
     });
   },
 
@@ -33,12 +22,7 @@ module.exports = {
     });
 
     newArticle.save((err) => {
-      if (err) {
-        console.error(err);
-        res.send(err);
-      } else {
-        res.send("Successfully added a new article.");
-      }
+      res.send(err ? err : "Successfully added a new article.");
     });
   },
 
@@ -51,12 +35,7 @@ module.exports = {
       // Overwrites original data with the new data.
       { overwrite: true },
       (err) => {
-        if (err) {
-          console.error(err);
-          res.send(err);
-        } else {
-          res.send("Successfully updated article.");
-        }
+        res.send(err ? err : "Successfully updated article.");
       }
     );
   },
@@ -68,38 +47,21 @@ module.exports = {
       // Selects the requested parameter, and updates it with the new value.
       { $set: req.body },
       (err) => {
-        if (err) {
-          console.error(err);
-          res.send(err);
-        } else {
-          res.send("Successfully updated article.");
-        }
+        res.send(err ? err : "Successfully updated article.");
       }
     );
   },
 
   deleteOne: (req, res) => {
-    Article.deleteOne({ title: req.params.articleTitle }, (err, result) => {
-      if (err) {
-        console.error(err);
-        res.send(err);
-      }
-      if (result) {
-        res.send(result);
-      } else {
-        res.send("No articles matching that title was found.");
-      }
+    Article.deleteOne({ title: req.params.articleTitle }, (err, article) => {
+      if (err) res.send(err);
+      res.send(article ? article : "Article not found.");
     });
   },
 
   deleteMany: (req, res) => {
     Article.deleteMany((err) => {
-      if (err) {
-        console.error(err);
-        res.send(err);
-      } else {
-        res.send("Successfully deleted all articles.");
-      }
+      res.send(err ? err : "Successfully deleted all articles.");
     });
   },
 };

@@ -2,37 +2,36 @@ const bcrypt = require("bcrypt");
 const User = require("../models/user");
 
 module.exports = {
+  /*
+   *  Get request for one user.
+   */
   getOne: (req, res) => {
     User.findById(req.params.userId, (err, user) => {
-      if (err) {
-        console.error(err);
+      if (err) res.send(err);
+      
+      if (user) {
+        res.send("Successfully found user: " + user);
       } else {
-        if (user) {
-          res.send("Successfully found user: " + user);
-        } else {
-          res.status(404).send("Could not find user.");
-        }
+        res.status(404).send("Could not find user.");
       }
     });
   },
 
+  /*
+   *  Get request for all users.
+   */
   getMany: (req, res) => {
     User.find((err, users) => {
-      if (err) {
-        console.error(err);
-        res.send(err);
-      } else {
-        res.send(users);
-      }
+      res.send(err ? err : users);
     });
   },
 
+  /*
+   *  Post request for one user.
+   */
   postOne: (req, res) => {
     bcrypt.hash(req.body.password, 10, (err, hash) => {
-      if (err) {
-        console.error(err);
-        res.send(err);
-      }
+      if (err) res.send(err);
 
       const newUser = new User({
         email: req.body.email,
@@ -40,22 +39,17 @@ module.exports = {
       });
 
       newUser.save((err) => {
-        if (err) {
-          console.error(err);
-          res.send(err);
-        } else {
-          res.send("User has been created!");
-        }
+        res.send(err ? err : "User has been created!");
       });
     });
   },
 
+  /*
+   *Put request for one user. (UPDATES ALL OF THE USERS DATA)
+   */
   putOne: (req, res) => {
     bcrypt.hash(req.body.password, 10, (err, hash) => {
-      if (err) {
-        console.error(err);
-        res.send(err);
-      }
+      if (err) res.send(err);
 
       User.updateOne(
         // Finds the User that wants updating.
@@ -72,101 +66,74 @@ module.exports = {
         // Overwrites original data with the new data.
         { overwrite: true },
         (err) => {
-          if (err) {
-            console.error(err);
-            res.send(err);
-          } else {
-            res.send("Successfully updated user.");
-          }
+          res.send(err ? err : "Successfully updated user.");
         }
       );
     });
   },
 
+  /*
+   *Patch request for one user. (UPDATES ONLY ONE PIECE OF THE USERS DATA)
+   */
   patchOne: async (req, res) => {
     let user = await User.findById(req.params.userId).exec();
-    if (!user) {
-      res.status(404).send("User not found.");
-    }
-
+    if (!user) res.status(404).send("User not found.");
+    
+    // If patch is a password.
     if (req.body.password) {
       bcrypt.compare(req.body.password, user.password, (err, result) => {
-        if (err) {
-          console.error(err);
-          res.send(err);
-        }
-
+        if (err) res.send(err);
+        
         if (result) {
           bcrypt.hash(req.body.newPassword, 10, (err, hash) => {
-            if (err) {
-              console.error(err);
-              res.send(err);
-            }
-
+            if (err) res.send(err);
+          
             User.updateOne(
               { _id: req.params.userId },
               { password: hash },
               (err) => {
-                if (err) {
-                  console.error(err);
-                  res.send(err);
-                } else {
-                  res.send("Successfully updated user password.");
-                }
+                res.send(err ? err : "Successfully updated user password.");
               }
             );
           });
         } else {
-        res.send("Error. You must provide the correct password for this user.");
-        } 
+          res.send("You must provide the correct password for this user.");
+        }
       });
+      // If patch isn't a password.
     } else {
       User.updateOne({ _id: req.params.userId }, { $set: req.body }, (err) => {
-        if (err) {
-          console.error(err);
-          res.send(err);
-        } else {
-          res.send("Successfully updated User.");
-        }
+        res.send(err ? err : "Successfully updated User.");
       });
     }
   },
 
+  /*
+   *Delete request for one user.
+   */
   deleteOne: async (req, res) => {
     let user = await User.findById(req.params.userId).exec();
-    if (!user) {
-      res.status(404).send("User not found.");
-    }
-
+    if (!user) res.status(404).send("User not found.");
+    
     bcrypt.compare(req.body.password, user.password, (err, result) => {
-      if (err) {
-          console.error(err);
-          res.send(err);
-        }
-
+      if (err) res.send(err);
+      
       if (result) {
         User.deleteOne({ _id: req.params.userId }, (err) => {
-          if (err) {
-            console.error(err);
-            res.send(err);
-          } else {
-            res.send("Successfully deleted User!");
-          }
+          res.send(err ? err : "Successfully deleted User!");
         });
       } else {
-        res.send("Error. You must provide the correct password for this user.");
+        res.send("You must provide the correct password for this user.");
       }
     });
   },
 
+  /*
+   *Delete request for all users.
+   */
   deleteMany: (req, res) => {
     User.deleteMany((err) => {
-      if (err) {
-        console.error(err);
-        res.send(err);
-      } else {
-        res.send("Successfully deleted all articles.");
-      }
+      res.send(err ? err : "Successfully deleted all Users.");
     });
   },
 };
