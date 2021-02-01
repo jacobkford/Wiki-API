@@ -1,5 +1,5 @@
-const bcrypt = require("bcrypt"); 
-const passport = require("passport");
+const bcrypt = require("bcrypt");
+//const passport = require("passport");
 const User = require("../models/user");
 
 module.exports = {
@@ -36,11 +36,11 @@ module.exports = {
    * Post request for one user.
    */
   postRegister: (req, res) => {
-    User.register({ username: req.body.email }, req.body.password, (err) => {
+    User.register({ email: req.body.email }, req.body.password, (err) => {
       if (err) {
         res.send(err);
       } else {
-        passport.authenticate("local", (req, res) => {
+        passport.authenticate("local")(req, res, () => {
           res.send("Successfully created user.");
         });
       }
@@ -49,7 +49,7 @@ module.exports = {
 
   postLogin: (req, res) => {
     const user = new User({
-      username: req.body.username,
+      email: req.body.email,
       password: req.body.password,
     });
 
@@ -63,6 +63,7 @@ module.exports = {
         });
       }
     });
+
   },
 
   /**
@@ -136,7 +137,7 @@ module.exports = {
     if (req.isAuthenticated()) {
       User.deleteOne({ _id: req.params.userId }, (err) => {
         res.send(err ? err : "Successfully deleted User!");
-      })
+      });
     } else {
       res.status(404).send("Authorization denied.");
     }

@@ -4,8 +4,8 @@ module.exports = (app) => {
   /**
    * Requests Targeting all Articles.
    */
-  app.get("/articles", controllers.articleController.getMany)
-  app.post("/articles", controllers.articleController.postOne)
+  app.get("/articles", controllers.articleController.getMany);
+  app.post("/articles", controllers.articleController.postOne);
   app.delete("/articles", controllers.articleController.deleteMany);
 
   /**
@@ -20,7 +20,7 @@ module.exports = (app) => {
    * Requests Targeting the all Users.
    */
   app.get("/users", controllers.userController.getMany);
-  app.get("/logout", controllers.userController.getLogout)
+  app.get("/logout", controllers.userController.getLogout);
   app.post("/register", controllers.userController.postRegister);
   app.post("/login", controllers.userController.postLogin);
   app.delete("/users", controllers.userController.deleteMany);
