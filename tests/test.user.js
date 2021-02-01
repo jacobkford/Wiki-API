@@ -1,13 +1,11 @@
-var assert = require('assert');
-const should = require("should");
+const { describe, it } = require('mocha');
 const mongoose = require('mongoose');
 const User = require("../models/user");
-let db;
 
 describe('Account', function() {
 
     before(function(done) {
-        db = mongoose.connect('mongodb://localhost/test');
+        let db = mongoose.connect('mongodb://localhost/test');
         done();
     });
 

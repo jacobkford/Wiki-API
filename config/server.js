@@ -6,7 +6,7 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const compression = require("compression");
 const hpp = require("hpp");
-const csurf = require("csurf");
+//const csurf = require("csurf");
 const settings = require("./settings");
 
 module.exports = (express, app, passport) => {
