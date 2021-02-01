@@ -38,9 +38,10 @@ module.exports = {
    * Post request for one user.
    */
   postRegister: (req, res) => {
-    User.register(new User({ email: req.body.email }), req.body.password, (err, user) => {
+    User.register({ email: req.body.email }, req.body.password, (err, user) => {
       if (err) {
-        return res.redirect("/register");
+        console.error(err);
+        res.redirect("/register");
       } else {
         passport.authenticate("local")(req, res, () => {
           res.send("Successfully created user.");
@@ -50,7 +51,20 @@ module.exports = {
   },
 
   postLogin: (req, res) => {
-    res.redirect('/');
+    const user = new User({
+      email: req.body.email,
+      password: req.body.password
+    });
+
+    req.login(user, (err) => {
+      if (err) {
+        console.error(err);
+      } else {
+        passport.authenticate("local")(req, res, () => {
+          res.send("Success.");
+        });
+      }
+    });
   },
 
   /**

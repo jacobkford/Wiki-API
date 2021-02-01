@@ -1,6 +1,4 @@
 const controllers = require("../controllers/controllers");
-const passport = require("passport");
-require("../config/passport")(passport);
 
 module.exports = (app) => {
   /**
@@ -24,7 +22,7 @@ module.exports = (app) => {
   app.get("/users", controllers.userController.getMany);
   app.get("/logout", controllers.userController.getLogout);
   app.post("/register", controllers.userController.postRegister);
-  app.post("/login", passport.authenticate("local"), controllers.userController.postLogin);
+  app.post("/login", controllers.userController.postLogin);
   app.delete("/users", controllers.userController.deleteMany);
 
   /**
