@@ -4,13 +4,12 @@ const helmet = require("helmet");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-const passport = require("passport");
 const compression = require("compression");
 const hpp = require("hpp");
 const csurf = require("csurf");
 const settings = require("./settings");
 
-module.exports = (express, app) => {
+module.exports = (express, app, passport) => {
     app.set("view engine", "ejs");
     app.use(compression());
     app.use(morgan("dev"));
@@ -36,6 +35,6 @@ module.exports = (express, app) => {
     app.use(cookieParser());
     app.use(passport.initialize());
     app.use(passport.session());
-    app.use(csurf());
+    //app.use(csurf());
     app.use(express.static("public"));
 };

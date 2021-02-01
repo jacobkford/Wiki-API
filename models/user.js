@@ -20,20 +20,10 @@ const userSchema = new mongoose.Schema({
     type: Date,
     default: () => Date.now(),
   },
-  name: {
-    firstName: {
-      type: String,
-      index: true,
-    },
-    lastName: {
-      type: String,
-      index: true,
-    },
-  },
 });
 
 userSchema.plugin(passportLocalMongoose, {
-  usernameField : "email",
+  usernameField: "email",
 });
 
 module.exports = mongoose.model("User", userSchema);

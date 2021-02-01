@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-vars */
 const bcrypt = require("bcrypt");
-//const passport = require("passport");
 const User = require("../models/user");
+const passport = require("passport");
+require("../config/passport")(passport);
 
 module.exports = {
   /**
@@ -36,9 +38,9 @@ module.exports = {
    * Post request for one user.
    */
   postRegister: (req, res) => {
-    User.register({ email: req.body.email }, req.body.password, (err) => {
+    User.register(new User({ email: req.body.email }), req.body.password, (err, user) => {
       if (err) {
-        res.send(err);
+        return res.redirect("/register");
       } else {
         passport.authenticate("local")(req, res, () => {
           res.send("Successfully created user.");
@@ -48,22 +50,7 @@ module.exports = {
   },
 
   postLogin: (req, res) => {
-    const user = new User({
-      email: req.body.email,
-      password: req.body.password,
-    });
-
-    req.login(user, (err) => {
-      if (err) {
-        console.error(err);
-        res.send(err);
-      } else {
-        passport.authenticate("local", (req, res) => {
-          res.send("Successfully created user.");
-        });
-      }
-    });
-
+    res.redirect('/');
   },
 
   /**

@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const settings = require("./settings");
 const mongoose = require("mongoose");
 
