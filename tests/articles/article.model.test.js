@@ -36,7 +36,7 @@ describe('Article Model Test', () => {
         }
     });
 
-    it('should create and save article successfully', async () => {
+    it('CREATE Article - Success', async () => {
         const validArticle = new Article(articleData);
         const savedArticle = await validArticle.save();
         // Object Id should be defined when successfully saved to MongoDB.
@@ -46,15 +46,14 @@ describe('Article Model Test', () => {
     });
 
     // You shouldn't be able to add in any field that isn't defined in the schema
-    it('insert article successfully, but if one or more fields that are not defined in schema and should return undefined', async () => {
+    it('FIELD Undefined - Fail', async () => {
         const articleWithInvalidField = new Article({ title: articleData.title, content: articleData.content, admin: 'true' });
         const savedArticleWithInvalidField = await articleWithInvalidField.save();
         expect(savedArticleWithInvalidField._id).toBeDefined();
         expect(savedArticleWithInvalidField.admin).toBeUndefined();
     });
 
-    // It should us told us the errors in on gender field.
-    it('should fail creating article without required field', async () => {
+    it('REQUIRED FIELD == Null - Fail', async () => {
         const articleWithoutRequiredField = new Article({ title: articleData.title });
         let err;
         try {

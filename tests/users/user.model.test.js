@@ -32,7 +32,7 @@ describe('User Model Test', () => {
         }
     });
 
-    it('should create and save user successfully', async () => {
+    it('CREATE User - Success', async () => {
         const validUser = new User(userData);
         const savedUser = await validUser.save();
         // Object Id should be defined when successfully saved to MongoDB.
@@ -42,7 +42,7 @@ describe('User Model Test', () => {
     });
 
     // You shouldn't be able to add in any field that isn't defined in the schema
-    it('insert user successfully, but if one or more fields that are not defined in schema and should return undefined', async () => {
+    it('FIELD Undefined - Fail', async () => {
         const userWithInvalidField = new User({ email: userData.email, password: userData.password, admin: 'true' });
         const savedUserWithInvalidField = await userWithInvalidField.save();
         expect(savedUserWithInvalidField._id).toBeDefined();
@@ -50,7 +50,7 @@ describe('User Model Test', () => {
     });
 
     // It should us told us the errors in on gender field.
-    it('should fail creating user without required field', async () => {
+    it('REQUIRED FIELD == Null - Fail', async () => {
         const userWithoutRequiredField = new User({ email: userData.email });
         let err;
         try {
@@ -63,7 +63,7 @@ describe('User Model Test', () => {
         expect(err.errors.password).toBeDefined();
     });
 
-    it('creating two users with the same email should fail', async () => {
+    it('DUPLICATE FIELD email - Fail', async () => {
         const firstUserWithSameEmail = new User({ email: userData.email, password: userData.password });
         const secondUserWithSameEmail = new User({ email: userData.email, password: "Hopefullythisfails1?" });
         let err;
