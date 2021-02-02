@@ -18,6 +18,20 @@ describe('User Model Test', () => {
             }
         });
     });
+    // Cleans up database between each test
+    afterEach(async () => {
+        await User.deleteMany()
+    });
+
+    afterAll(async (done) => {
+        // Removes the User collection
+        try {
+            await mongoose.connection.db.dropDatabase(done)
+            await mongoose.connection.close(done);
+        } catch (err) {
+            console.log(err);
+        }
+    });
 
     it('should create and save user successfully', async () => {
         const validUser = new User(userData);
@@ -65,20 +79,5 @@ describe('User Model Test', () => {
         }
         expect(err).toBeInstanceOf(mongoose.mongo.MongoError);
         expect(err.keyValue.email).toBeDefined();
-    });
-
-    // Cleans up database between each test
-    afterEach(async () => {
-        await User.deleteMany()
-    });
-
-    afterAll(async (done) => {
-        // Removes the User collection
-        try {
-            await mongoose.connection.db.dropDatabase(done)
-            await mongoose.connection.close(done);
-        } catch (err) {
-            console.log(err);
-        }
     });
 });
