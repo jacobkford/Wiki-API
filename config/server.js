@@ -22,7 +22,7 @@ module.exports = (express, app, passport) => {
     app.use(hpp());
     app.use(cors({
         // Location of frontend app
-        origin: "http://localhost:3000",
+        //origin: "http://localhost:3000",
     }));
     app.use(session({
         secret: settings.cookieSecret,
