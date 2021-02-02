@@ -61,7 +61,16 @@ module.exports = {
 
   deleteMany: (req, res) => {
     Article.deleteMany((err) => {
-      res.send(err ? err : "Successfully deleted all articles.");
+      if (err) {
+        res.send(err);
+      } else {
+        res.json({
+          status: "success",
+          removed: "all",
+          newLength: 0,
+        });
+      }
     });
+
   },
 };

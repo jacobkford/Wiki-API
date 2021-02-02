@@ -35,13 +35,14 @@ describe('Article API Test', () => {
         });
     });
 
-    beforeEach(async () => {
+    beforeEach(async (done) => {
         for (i = 0; i < articlePreTestData.length; i++) {
             const newArticle = new Article(articlePreTestData[i]);
             await newArticle.save((err) => {
                 if (err) console.error(err);
             });
         }
+        done();
     });
 
     afterEach(async (done) => {
@@ -64,5 +65,29 @@ describe('Article API Test', () => {
             expect(body[i].title).toBe(articlePreTestData[i].title);
             expect(body[i].content).toBe(articlePreTestData[i].content);
         }
+    });
+
+    it("POST /articles - success", async () => {
+        await request(app).post("/articles").send(articleTestData);
+        await Article.findOne(
+            { title: articleTestData.title },
+            (err, article) => {
+                if (err) {
+                    console.error(err);
+                } else {
+                    expect(article.title).toBe(articleTestData.title);
+                    expect(article.content).toBe(articleTestData.content);
+                }
+            }
+        );
+    });
+
+    it("DELETE /articles - success", async () => {
+        const { body } = await request(app).delete("/articles");
+        expect(body).toEqual({
+            status: "success",
+            removed: "all",
+            newLength: 0,
+        });
     });
 });
