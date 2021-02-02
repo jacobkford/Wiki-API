@@ -4,8 +4,7 @@ const User = require("../../models/user");
 const userData = { email: "test@testmail.com", password: "Testy123" };
 
 describe('User Model Test', () => {
-    // It's just so easy to connect to the MongoDB Memory Server 
-    // By using mongoose.connect
+    
     beforeAll(async () => {
         await mongoose.connect(process.env.DB, {
             useNewUrlParser: true,
@@ -18,7 +17,7 @@ describe('User Model Test', () => {
             }
         });
     });
-    // Cleans up database between each test
+    //Cleans up database between each test
     afterEach(async () => {
         await User.deleteMany()
     });
@@ -42,19 +41,17 @@ describe('User Model Test', () => {
         expect(savedUser.password).toBe(userData.password); 
     });
 
-    // Test Schema is working!!!
     // You shouldn't be able to add in any field that isn't defined in the schema
     it('insert user successfully, but if one or more fields that are not defined in schema and should return undefined', async () => {
-        const userWithInvalidField = new User({ email: 'newuser@jmail.com', password: 'password', admin: 'true' });
+        const userWithInvalidField = new User({ email: userData.email, password: userData.password, admin: 'true' });
         const savedUserWithInvalidField = await userWithInvalidField.save();
         expect(savedUserWithInvalidField._id).toBeDefined();
         expect(savedUserWithInvalidField.admin).toBeUndefined();
     });
 
-    // Test Validation is working!!!
     // It should us told us the errors in on gender field.
     it('should fail creating user without required field', async () => {
-        const userWithoutRequiredField = new User({ email: 'newuser@jmail.net' });
+        const userWithoutRequiredField = new User({ email: userData.email });
         let err;
         try {
             const savedUserWithoutRequiredField = await userWithoutRequiredField.save();
@@ -67,8 +64,8 @@ describe('User Model Test', () => {
     });
 
     it('creating two users with the same email should fail', async () => {
-        const firstUserWithSameEmail = new User({ email: "notunique@fail.com", password: "Thisshouldfail123!" });
-        const secondUserWithSameEmail = new User({ email: "notunique@fail.com", password: "Hopefullythisfails1?" });
+        const firstUserWithSameEmail = new User({ email: userData.email, password: userData.password });
+        const secondUserWithSameEmail = new User({ email: userData.email, password: "Hopefullythisfails1?" });
         let err;
         try {
             firstUserWithSameEmail.save();
@@ -81,3 +78,4 @@ describe('User Model Test', () => {
         expect(err.keyValue.email).toBeDefined();
     });
 });
+
