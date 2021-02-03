@@ -14,7 +14,7 @@ module.exports = (app) => {
   app.get("/articles/:articleTitle", controllers.articleController.getOne);
   app.put("/articles/:articleTitle", controllers.articleController.putOne);
   app.patch("/articles/:articleTitle", controllers.articleController.patchOne);
-  app.delete("/articles/:articleTitle",controllers.articleController.deleteOne);
+  app.delete("/articles/:articleTitle", controllers.articleController.deleteOne);
 
   /**
    * Requests Targeting the all Users.

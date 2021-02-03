@@ -31,11 +31,16 @@ module.exports = {
       // Finds the Article that wants updating.
       { title: req.params.articleTitle },
       // Updated Article data parameters.
-      { title: req.body.title, content: req.body.content },
+      {
+        $set: { 
+          title: req.body.title,
+          content: req.body.content
+        },
+      },
       // Overwrites original data with the new data.
       { overwrite: true },
-      (err) => {
-        res.send(err ? err : "Successfully updated article.");
+      (err, article) => {
+        res.send(err ? err : article);
       }
     );
   },

@@ -20,6 +20,11 @@ app.get("/articles", articleController.getMany);
 app.post("/articles", articleController.postOne);
 app.delete("/articles", articleController.deleteMany);
 
+app.get("/articles/:articleTitle", articleController.getOne);
+app.put("/articles/:articleTitle", articleController.putOne);
+app.patch("/articles/:articleTitle", articleController.patchOne);
+app.delete("/articles/:articleTitle", articleController.deleteOne);
+
 describe('Article API Test', () => {
 
     beforeAll(async () => {
@@ -90,4 +95,39 @@ describe('Article API Test', () => {
             newLength: 0,
         });
     });
+
+    it("GET /articles/Test - success", async () => {
+        await request(app).post("/articles").send(articleTestData);
+        const { body } = await request(app).get("/articles/" + articleTestData.title);
+        expect(body._id).toBeDefined();
+        expect(body.title).toBe(articleTestData.title);
+        expect(body.content).toBe(articleTestData.content);
+    });
+
+    it("PUT /articles/Test - success", async () => {
+        await request(app).post("/articles").send(articleTestData);
+        const articlePutTestData = { title: "tseT", content: "...tset a si sihT" };
+        await request(app).put("/articles/" + articleTestData.title
+        ).send(articlePutTestData);
+
+        const { body } = await request(app).get("/articles/" + articlePutTestData.title);
+
+        expect(body._id).toBeDefined();
+        expect(body.title).toBe(articlePutTestData.title);
+        expect(body.content).toBe(articlePutTestData.content);
+    });
+
+    it("PATCH /articles/Test - success", async () => {
+        await request(app).post("/articles").send(articleTestData);
+        const articlePutTestData = { content: "...tset a si sihT" };
+        await request(app).patch("/articles/" + articleTestData.title
+        ).send(articlePutTestData);
+
+        const { body } = await request(app).get("/articles/" + articleTestData.title);
+
+        expect(body._id).toBeDefined();
+        expect(body.title).toBe(articleTestData.title);
+        expect(body.content).toBe(articlePutTestData.content);
+    });
+
 });
