@@ -43,7 +43,8 @@ module.exports = {
   },
 
   deleteOne: (req, res) => {
-    Article.deleteOne({ title: req.params.articleTitle }, (err, result) => {
+    const article = { title: req.params.articleTitle };
+    Article.deleteOne(article, (err, result) => {
       res.send(err ? err : result);
     });
   },

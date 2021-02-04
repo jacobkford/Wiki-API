@@ -1,5 +1,5 @@
 const { user, article } = require("../controllers/controllers");
-const { CheckAuth, GoogleLogin, WikiLogin } = require("../config/auth/auth");
+const { CheckAuth, GoogleLogin, GoogleLoginCB, UserLogin } = require("../config/auth/auth");
 const passport = require("passport");
 require("../config/auth/passport")(passport);
 
@@ -33,18 +33,12 @@ module.exports = (app) => {
   /**
    * Websites login auth.
    */
-  app.get("/auth/samplewiki/login", WikiLogin);
+  app.get("/auth/login", UserLogin);
   /**
    * Googles login auth.
    */
-  app.get("/auth/google",
-    passport.authenticate("google", {
-      session: false,
-      scope: ['profile']
-    })
-  );
-  app.get("/auth/google/simplewiki", GoogleLogin);
-
+  app.get("/auth/google", GoogleLogin);
+  app.get("/auth/google/simplewiki", GoogleLoginCB);
   /**
    * Handling error page.
    */

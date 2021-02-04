@@ -1,5 +1,3 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
 const User = require("../models/user");
 const passport = require("passport");
 require("../config/auth/passport")(passport);

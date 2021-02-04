@@ -25,7 +25,7 @@ function IssueJWT (user) {
   }
 }
 
-function WikiLogin(req, res, next) {
+function UserLogin(req, res, next) {
   User.findOne({ email: req.body.email }, (err, user) => {
     if (err || !user) {
       res.status(401).json({ success: false, msg: "could not find user" });
@@ -50,7 +50,14 @@ function WikiLogin(req, res, next) {
   })(res, req, next);
 }
 
-function GoogleLogin(req, res, next) {
+function GoogleLogin() {
+  passport.authenticate("google", {
+    session: false,
+    scope: ['profile']
+  });
+}
+
+function GoogleLoginCB(req, res, next) {
   passport.authenticate("google", { session: false, }, (err, user) => {
     if (err || !user) {
       res.status(401).json({ success: false, msg: "could not find user" });
@@ -87,5 +94,6 @@ function CheckAuth(req, res, next) {
 
 module.exports.IssueJWT = IssueJWT;
 module.exports.CheckAuth = CheckAuth;
-module.exports.WikiLogin = WikiLogin;
+module.exports.UserLogin = UserLogin;
 module.exports.GoogleLogin = GoogleLogin;
+module.exports.GoogleLoginCB = GoogleLoginCB;

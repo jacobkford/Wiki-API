@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 /**
  * This module will generate a public and private keypair and save to current directory
  * 

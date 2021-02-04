@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const path = require("path");
 const fs = require("fs");
 const pathToPubKey = path.join(__dirname, 'id_rsa_pub.pem');
