@@ -1,5 +1,5 @@
 const controllers = require("../controllers/controllers");
-const { authorized } = require("../config/auth");
+const { CheckAuth, googleLogin, wikiLogin } = require("../config/auth");
 const passport = require("passport");
 require("../config/passport")(passport);
 
@@ -9,16 +9,16 @@ module.exports = (app) => {
    * Requests Targeting all Articles.
    */
   app.get("/articles", controllers.article.getMany);
-  app.post("/articles", authorized, controllers.article.postOne);
-  app.delete("/articles", authorized, controllers.article.deleteMany);
+  app.post("/articles", CheckAuth, controllers.article.postOne);
+  app.delete("/articles", CheckAuth, controllers.article.deleteMany);
 
   /**
    * Requests Targeting a specific Article.
    */
   app.get("/articles/:articleTitle", controllers.article.getOne);
-  app.put("/articles/:articleTitle", authorized, controllers.article.putOne);
-  app.patch("/articles/:articleTitle", authorized, controllers.article.patchOne);
-  app.delete("/articles/:articleTitle", authorized, controllers.article.deleteOne);
+  app.put("/articles/:articleTitle", CheckAuth, controllers.article.putOne);
+  app.patch("/articles/:articleTitle", CheckAuth, controllers.article.patchOne);
+  app.delete("/articles/:articleTitle", CheckAuth, controllers.article.deleteOne);
 
   /**
    * Requests Targeting the all Users.
@@ -32,10 +32,13 @@ module.exports = (app) => {
   /**
    * Requests Targeting a specific User.
    */
-  app.get("/users/:userId", authorized, controllers.user.getOne);
-  app.put("/users/:userId", authorized, controllers.user.putOne);
-  app.patch("/users/:userId", authorized, controllers.user.patchOne);
-  app.delete("/users/:userId", authorized, controllers.user.deleteMany);
+  app.get("/users/:userId", CheckAuth, controllers.user.getOne);
+  app.put("/users/:userId", CheckAuth, controllers.user.putOne);
+  app.patch("/users/:userId", CheckAuth, controllers.user.patchOne);
+  app.delete("/users/:userId", CheckAuth, controllers.user.deleteMany);
+
+  app.get("/auth/samplewiki/login", wikiLogin);
+
 
   app.get("/auth/google",
     passport.authenticate("google", {
@@ -44,13 +47,7 @@ module.exports = (app) => {
     })
   );
 
-  app.get("/auth/google/simplewiki",
-    passport.authenticate("google", {
-      session: false,
-      failureRedirect: "/login"
-    }),
-    controllers.auth.googleCallbackGet
-  );
+  app.get("/auth/google/simplewiki", googleLogin);
 
   /**
    * Handling error page.

@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 const mongoose = require('mongoose');
 const User = require("../../models/user");
+const bcrypt = require("bcrypt");
 const userData = { email: "test@testmail.com", password: "Testy123" };
 
 describe('User Model Test', () => {
@@ -38,7 +39,11 @@ describe('User Model Test', () => {
         // Object Id should be defined when successfully saved to MongoDB.
         expect(savedUser._id).toBeDefined();
         expect(savedUser.email).toBe(userData.email);
-        expect(savedUser.password).toBe(userData.password); 
+
+        await bcrypt.compare(userData.password, savedUser.password, (err, result) => {
+            if (err) console.error(err);
+            expect(result).toBe(true);
+        });
     });
 
     // You shouldn't be able to add in any field that isn't defined in the schema

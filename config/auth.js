@@ -1,5 +1,6 @@
 const jsonwebtoken = require("jsonwebtoken");
 const User = require("../models/user");
+const bcrypt = require('bcrypt');
 const settings = require("../config/settings");
 const passport = require("passport");
 require("../config/passport")(passport);
@@ -24,21 +25,67 @@ function issueJWT (user) {
   }
 }
 
+function wikiLogin(req, res, next) {
+  User.findOne({ email: req.body.email }, (err, user) => {
+    if (err || !user) {
+      res.status(401).json({ success: false, msg: "could not find user" });
+    }
+    try {
+      bcrypt.compare(req.body.password, user.password, (err, result) => {
+        if (err || !user) {
+          res.status(401).json({ success: false, msg: "you entered the wrong password" });
+        }
+        const jwt = issueJWT(user);
+        res.status(200).json({
+          success: true,
+          user: user,
+          token: jwt.token,
+          expiresIn: jwt.expires
+        });
+      });
+    } catch (err) {
+      next(err);
+    }
+    next();
+  })(res, req, next);
+}
 
-function authorized(request, response, next) {
+function googleLogin(req, res, next) {
+  passport.authenticate("google", { session: false, }, (err, user) => {
+    if (err || !user) {
+      res.status(401).json({ success: false, msg: "could not find user" });
+    }
+    try {
+      const jwt = issueJWT(user)
+      res.status(200).json({
+        success: true,
+        user: user,
+        token: jwt.token,
+        expiresIn: jwt.expires
+      });
+    } catch (err) {
+      next(err);
+    }
+    next();
+  })(req, res, next);
+}
+
+function CheckAuth(req, res, next) {
   passport.authenticate('jwt', { session: false, }, async (error, token) => {
       if (error || !token) {
-          response.status(401).json({ message: 'Unauthorized' });
+          res.status(401).json({ message: 'Unauthorized' });
       } 
       try {
           const user = await User.findById(token.id);
-          request.user = user;
+          req.user = user;
       } catch (error) {
-          next(error);
+        next(error);
       }
       next();
-  })(request, response, next);   
+  })(req, res, next);   
 }
 
 module.exports.issueJWT = issueJWT;
-module.exports.authorized = authorized;
+module.exports.CheckAuth = CheckAuth;
+module.exports.wikiLogin = wikiLogin;
+module.exports.googleLogin = googleLogin;
