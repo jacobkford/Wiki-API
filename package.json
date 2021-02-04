@@ -8,9 +8,6 @@
     "dev": "env-cmd ./config/dev.env nodemon",
     "test": "env-cmd ./config/test.env jest"
   },
-  "jest": {
-    "testEnvironment": "node"
-  },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -34,9 +31,7 @@
     "nodemon": "^2.0.7",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
-    "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0",
-    "passport-local-mongoose": "^6.1.0"
+    "passport-jwt": "^4.0.0"
   },
   "devDependencies": {
     "env-cmd": "^8.0.2",

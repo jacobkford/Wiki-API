@@ -5,19 +5,14 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 
-const path = require("path");
-const fs = require("fs");
-const pathToPubKey = path.join(__dirname, '..', 'id_rsa_pub.pem');
-const PUB_KEY = fs.readFileSync(pathToPubKey, 'utf8');
-
 const jwtOpts = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrkey: PUB_KEY,
+    secretOrKey: settings.publicKey,
     algorithms: ['RS256']
 };
 const googleOpts = {
     clientID: settings.googleClient,
-    clientSecret: PUB_KEY,
+    clientSecret: settings.publicKey,
     callbackURL: "http://localhost:3000/auth/google/simplewiki",
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
 };

@@ -4,6 +4,7 @@ const User = require("../models/user");
 const passport = require("passport");
 require("../config/passport")(passport);
 const { issueJWT } = require("../config/auth");
+const bcrypt = require("bcrypt");
 
 module.exports = {
 
@@ -29,31 +30,37 @@ module.exports = {
       email: req.body.email,
       password: req.body.password
     });
-    newUser.save().then((user) => {
-        const jwt = issueJWT(user)
-        res.json({
-          success: true,
-          user: user,
-          token: jwt.token,
-          expiresIn: jwt.expires
-        });
-      }).catch(err => next(err));
+    newUser.save((err, user) => {
+      if (err) res.send(err);
+      const jwt = issueJWT(user)
+      res.json({
+        success: true,
+        user: user,
+        token: jwt.token,
+        expiresIn: jwt.expires
+      });
+    });
   },
 
   postLogin: (req, res) => {
-    const user = new User({
-      email: req.body.email,
-      password: req.body.password
-    });
-
-    req.login(user, (err) => {
-      if (err) {
-        console.error(err);
-      } else {
-        passport.authenticate("local")(req, res, () => {
-          res.send("Success.");
-        });
-      }
+    User.findOne({ email: req.body.email }, (err, user) => {
+      if (err) res.send(err);
+      if (!user) {
+          res.status(401).json({ success: false, msg: "could not find user" });
+      }    
+      bcrypt.compare(req.body.password, user.password, (err, result) => {
+        if (err) res.send(err);
+        if (result) {
+          const tokenObject = issueJWT(user);
+          res.status(200).json({
+            success: true,
+            token: tokenObject.token,
+            expiresIn: tokenObject.expires
+          });
+        } else {
+          res.status(401).json({ success: false, msg: "you entered the wrong password" });
+        }
+      });
     });
   },
 
