@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 const express = require("express");
-const Article = require("../../models/article");
-const articleController = require("../../controllers/controllers").article;
+const Article = require("../../src/models/article");
+const articleController = require("../../src/controllers/controllers").article;
 const request = require("supertest");
 const mongoose = require('mongoose');
 const articleTestData = { title: "Test", content: "This is a test..." };

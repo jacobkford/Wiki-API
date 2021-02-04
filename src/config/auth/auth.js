@@ -1,15 +1,15 @@
 const jsonwebtoken = require("jsonwebtoken");
-const User = require("../models/user");
+const User = require("../../models/user");
 const bcrypt = require('bcrypt');
-const settings = require("../config/settings");
+const settings = require("../settings/settings");
 const passport = require("passport");
-require("../config/passport")(passport);
+require("./passport")(passport);
 
 /**
  * @param {*} user - The user object.  We need this to set the JWT `sub` payload property to the MongoDB user ID
  */
 
-function issueJWT (user) {
+function IssueJWT (user) {
   const _id = user._id;
   const expiresIn = '1d';
   const payload = {
@@ -25,7 +25,7 @@ function issueJWT (user) {
   }
 }
 
-function wikiLogin(req, res, next) {
+function WikiLogin(req, res, next) {
   User.findOne({ email: req.body.email }, (err, user) => {
     if (err || !user) {
       res.status(401).json({ success: false, msg: "could not find user" });
@@ -35,7 +35,7 @@ function wikiLogin(req, res, next) {
         if (err || !user) {
           res.status(401).json({ success: false, msg: "you entered the wrong password" });
         }
-        const jwt = issueJWT(user);
+        const jwt = IssueJWT(user);
         res.status(200).json({
           success: true,
           user: user,
@@ -50,13 +50,13 @@ function wikiLogin(req, res, next) {
   })(res, req, next);
 }
 
-function googleLogin(req, res, next) {
+function GoogleLogin(req, res, next) {
   passport.authenticate("google", { session: false, }, (err, user) => {
     if (err || !user) {
       res.status(401).json({ success: false, msg: "could not find user" });
     }
     try {
-      const jwt = issueJWT(user)
+      const jwt = IssueJWT(user)
       res.status(200).json({
         success: true,
         user: user,
@@ -85,7 +85,7 @@ function CheckAuth(req, res, next) {
   })(req, res, next);   
 }
 
-module.exports.issueJWT = issueJWT;
+module.exports.IssueJWT = IssueJWT;
 module.exports.CheckAuth = CheckAuth;
-module.exports.wikiLogin = wikiLogin;
-module.exports.googleLogin = googleLogin;
+module.exports.WikiLogin = WikiLogin;
+module.exports.GoogleLogin = GoogleLogin;

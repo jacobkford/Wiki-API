@@ -2,11 +2,11 @@
   "name": "wiki-api",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "./src/app.js",
   "scripts": {
     "start": "node",
-    "dev": "env-cmd ./config/dev.env nodemon",
-    "test": "env-cmd ./config/test.env jest"
+    "dev": "env-cmd ./src/dev.env nodemon",
+    "test": "env-cmd ./tests/test.env jest"
   },
   "author": "",
   "license": "ISC",

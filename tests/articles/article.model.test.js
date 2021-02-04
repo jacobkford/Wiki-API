@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const mongoose = require('mongoose');
-const Article = require("../../models/article");
+const Article = require("../../src/models/article");
 const articleData = { title: "Test", content: "This is a test..." };
 
 describe('Article Model Test', () => {

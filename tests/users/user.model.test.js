@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 const mongoose = require('mongoose');
-const User = require("../../models/user");
+const User = require("../../src/models/user");
 const bcrypt = require("bcrypt");
 const userData = { email: "test@testmail.com", password: "Testy123" };
 

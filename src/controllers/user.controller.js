@@ -2,9 +2,8 @@
 /* eslint-disable no-unused-vars */
 const User = require("../models/user");
 const passport = require("passport");
-require("../config/passport")(passport);
-const { issueJWT } = require("../config/auth");
-const bcrypt = require("bcrypt");
+require("../config/auth/passport")(passport);
+const { IssueJWT } = require("../config/auth/auth");
 
 module.exports = {
 
@@ -14,52 +13,25 @@ module.exports = {
     });
   },
 
-  getLogout: (req, res) => {
-    console.log(req.session);
-    req.logout();
-  },
-
   getMany: (req, res) => {
     User.find((err, result) => {
       res.send(err ? err : result);
     });
   },
 
-  postRegister: (req, res) => {
+  postOne: (req, res) => {
     const newUser = new User({
       email: req.body.email,
       password: req.body.password
     });
     newUser.save((err, user) => {
       if (err) res.send(err);
-      const jwt = issueJWT(user)
+      const jwt = IssueJWT(user)
       res.json({
         success: true,
         user: user,
         token: jwt.token,
         expiresIn: jwt.expires
-      });
-    });
-  },
-
-  postLogin: (req, res) => {
-    User.findOne({ email: req.body.email }, (err, user) => {
-      if (err) res.send(err);
-      if (!user) {
-          res.status(401).json({ success: false, msg: "could not find user" });
-      }    
-      bcrypt.compare(req.body.password, user.password, (err, result) => {
-        if (err) res.send(err);
-        if (result) {
-          const tokenObject = issueJWT(user);
-          res.status(200).json({
-            success: true,
-            token: tokenObject.token,
-            expiresIn: tokenObject.expires
-          });
-        } else {
-          res.status(401).json({ success: false, msg: "you entered the wrong password" });
-        }
       });
     });
   },
