@@ -1,5 +1,7 @@
+/* eslint-disable no-undef */
 const mongoose = require("mongoose");
-const passportLocalMongoose = require("passport-local-mongoose");
+const bcrypt = require('bcrypt');
+const findOrCreate = require("mongoose-findorcreate");
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -17,15 +19,33 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  googleId: {
+    type: String,
+  },
   registeredAt: {
     type: Date,
     default: () => Date.now(),
   },
 });
 
-userSchema.plugin(passportLocalMongoose, {
-  usernameField: "email",
-});
+userSchema.pre('save', async function(next) {
+    // eslint-disable-next-line no-unused-vars
+    const user = this;
+    const hash = await bcrypt.hash(this.password, 10);
+
+    this.password = hash;
+    next();
+  }
+);
+
+userSchema.methods.isValidPassword = async function(password) {
+  const user = this;
+  const compare = await bcrypt.compare(password, user.password);
+
+  return compare;
+}
+
+userSchema.plugin(findOrCreate);
 
 module.exports = mongoose.model("User", userSchema);
 

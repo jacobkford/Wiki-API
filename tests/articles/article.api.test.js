@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 const express = require("express");
 const Article = require("../../models/article");
-const articleController = require("../../controllers/controllers").articleController;
+const articleController = require("../../controllers/controllers").article;
 const request = require("supertest");
 const mongoose = require('mongoose');
 const articleTestData = { title: "Test", content: "This is a test..." };
@@ -75,8 +75,7 @@ describe('Article API Test', () => {
     it("POST /articles - success", async () => {
         await request(app).post("/articles").send(articleTestData);
         await Article.findOne(
-            { title: articleTestData.title },
-            (err, article) => {
+            { title: articleTestData.title }, (err, article) => {
                 if (err) {
                     console.error(err);
                 } else {
@@ -89,16 +88,14 @@ describe('Article API Test', () => {
 
     it("DELETE /articles - success", async () => {
         const { body } = await request(app).delete("/articles");
-        expect(body).toEqual({
-            status: "success",
-            removed: "all",
-            newLength: 0,
-        });
+        expect(body.ok).toEqual(1);
     });
 
     it("GET /articles/Test - success", async () => {
         await request(app).post("/articles").send(articleTestData);
-        const { body } = await request(app).get("/articles/" + articleTestData.title);
+
+        const { body } = await request(app)
+            .get("/articles/" + articleTestData.title);
         expect(body._id).toBeDefined();
         expect(body.title).toBe(articleTestData.title);
         expect(body.content).toBe(articleTestData.content);
@@ -106,12 +103,20 @@ describe('Article API Test', () => {
 
     it("PUT /articles/Test - success", async () => {
         await request(app).post("/articles").send(articleTestData);
-        const articlePutTestData = { title: "tseT", content: "...tset a si sihT" };
-        await request(app).put("/articles/" + articleTestData.title
-        ).send(articlePutTestData);
+        const articlePutTestData = {
+            title: "tseT",
+            content: "...tset a si sihT"
+        };
+        
+        const res = await request(app)
+            .put("/articles/" + articleTestData.title)
+            .send(articlePutTestData);
+        expect(res.body.n).toBe(1);
+        expect(res.body.nModified).toBe(1);
+        expect(res.body.ok).toBe(1);
 
-        const { body } = await request(app).get("/articles/" + articlePutTestData.title);
-
+        const { body } = await request(app)
+            .get("/articles/" + articlePutTestData.title);
         expect(body._id).toBeDefined();
         expect(body.title).toBe(articlePutTestData.title);
         expect(body.content).toBe(articlePutTestData.content);
@@ -120,14 +125,27 @@ describe('Article API Test', () => {
     it("PATCH /articles/Test - success", async () => {
         await request(app).post("/articles").send(articleTestData);
         const articlePutTestData = { content: "...tset a si sihT" };
-        await request(app).patch("/articles/" + articleTestData.title
-        ).send(articlePutTestData);
+        
+        const res = await request(app)
+            .patch("/articles/" + articleTestData.title)
+            .send(articlePutTestData);
+        expect(res.body.n).toBe(1);
+        expect(res.body.nModified).toBe(1);
+        expect(res.body.ok).toBe(1);
 
-        const { body } = await request(app).get("/articles/" + articleTestData.title);
-
+        const { body } = await request(app)
+            .get("/articles/" + articleTestData.title);
         expect(body._id).toBeDefined();
         expect(body.title).toBe(articleTestData.title);
         expect(body.content).toBe(articlePutTestData.content);
     });
 
+    it("DELETE /articles/Test - success", async () => {
+        await request(app).post("/articles").send(articleTestData);
+        const { body } = await request(app)
+            .delete("/articles/" + articleTestData.title);
+        expect(body.n).toEqual(1);
+        expect(body.ok).toEqual(1);
+        expect(body.deletedCount).toEqual(1);
+    });
 });

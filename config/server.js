@@ -10,7 +10,6 @@ const hpp = require("hpp");
 const settings = require("./settings");
 
 module.exports = (express, app, passport) => {
-    app.set("view engine", "ejs");
     app.use(compression());
     app.use(morgan("dev"));
     app.use(bodyParser.json());
@@ -24,14 +23,16 @@ module.exports = (express, app, passport) => {
         // Location of frontend app
         //origin: "http://localhost:3000",
     }));
-    app.use(session({
-        secret: settings.cookieSecret,
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            secure: false,
-        },
-    }));
+    app.use(session(
+        // {
+        //     secret: settings.secret,
+        //     resave: false,
+        //     saveUninitialized: false,
+        //     cookie: {
+        //         secure: false,
+        //     },
+        // }
+    ));
     app.use(cookieParser());
     app.use(passport.initialize());
     app.use(passport.session());
