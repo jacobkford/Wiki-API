@@ -13,5 +13,4 @@ require(path.resolve(__dirname + "/config/passport"))(passport);
 require(path.resolve(__dirname + "/config/server"))(express, app, passport);
 require(path.resolve(__dirname + "/routes/routes"))(app);
 
-
 app.listen(settings.port, log.listener);

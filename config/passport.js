@@ -27,8 +27,15 @@ module.exports = (passport) => {
         })
     });
     passport.use(new JwtStrategy(jwtOpts, (payload, done) => {
-        User.findOne({ _id: payload.sub }, (err, user) => {
-            return done(err, user);
+        User.findById(payload.sub , (err, user) => {
+            if (err) {
+                return done(err, false);
+            }
+            if (user) {
+                return done(null, user);
+            } else {
+                return done(null, false);
+            }
         });
     }));
     passport.use(new GoogleStrategy(googleOpts, (accessToken, refreshToken, profile, done) => {

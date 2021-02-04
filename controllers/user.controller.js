@@ -70,35 +70,23 @@ module.exports = {
       email: req.body.email,
       password: req.body.password
     };
-    if (req.isAuthenticated()) {
-      User.replaceOne(user, newData, (err, result) => {
-        res.send(err ? err : result);
-      });
-    } else {
-      res.status(404).send("Authorization denied.");
-    }
+    User.replaceOne(user, newData, (err, result) => {
+      res.send(err ? err : result);
+    });
   },
 
   patchOne: async (req, res) => {
     const user = { _id: req.params.userId };
     const newData = { $set: req.body };
-    if (req.isAuthenticated()) {
-      User.updateOne(user, newData, (err, result) => {
-        res.send(err ? err : result);
-      });
-    } else {
-      res.status(404).send("Authorization denied.");
-    }
+    User.updateOne(user, newData, (err, result) => {
+      res.send(err ? err : result);
+    });
   },
 
   deleteOne: async (req, res) => {
-    if (req.isAuthenticated()) {
-      User.deleteOne({ _id: req.params.userId }, (err, result) => {
-        res.send(err ? err : result);
-      });
-    } else {
-      res.status(404).send("Authorization denied.");
-    }
+    User.deleteOne({ _id: req.params.userId }, (err, result) => {
+      res.send(err ? err : result);
+    });
   },
 
   deleteMany: (req, res) => {
