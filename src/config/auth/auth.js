@@ -1,7 +1,7 @@
 const jsonwebtoken = require("jsonwebtoken");
-const User = require("../../models/user");
+const User = require("@models/user");
 const bcrypt = require('bcrypt');
-const settings = require("../settings/settings");
+const settings = require("@settings/settings");
 const passport = require("passport");
 require("./passport")(passport);
 
@@ -17,7 +17,10 @@ function IssueJWT (user) {
     iat: Date.now()
   };
 
-  const signedToken = jsonwebtoken.sign(payload, settings.privateKey, { expiresIn: expiresIn, algorithm: 'RS256' });
+  const signedToken = jsonwebtoken.sign(
+    payload,settings.privateKey, {
+    expiresIn: expiresIn, algorithm: 'RS256'
+  });
 
   return {
     token: "Bearer " + signedToken,
@@ -32,7 +35,7 @@ function UserLogin(req, res, next) {
     }
     try {
       bcrypt.compare(req.body.password, user.password, (err, result) => {
-        if (err || !user) {
+        if (err || !result) {
           res.status(401).json({ success: false, msg: "you entered the wrong password" });
         }
         const jwt = IssueJWT(user);

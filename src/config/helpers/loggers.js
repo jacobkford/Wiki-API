@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-const settings = require("../settings/settings");
+const settings = require("@settings/settings");
 const mongoose = require("mongoose");
 
 module.exports = {

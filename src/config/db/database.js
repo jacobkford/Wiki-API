@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const log = require("../helpers/loggers");
+const log = require("@helpers/loggers");
 
 module.exports = (settings) => {
     mongoose.connect(settings.db, {

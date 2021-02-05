@@ -1,7 +1,12 @@
-const { user, article } = require("../controllers/controllers");
-const { CheckAuth, GoogleLogin, GoogleLoginCB, UserLogin } = require("../config/auth/auth");
+const { user, article } = require("@controllers/controllers");
+const {
+  CheckAuth,
+  GoogleLogin,
+  GoogleLoginCB,
+  UserLogin
+} = require("@auth/auth");
 const passport = require("passport");
-require("../config/auth/passport")(passport);
+require("@auth/passport")(passport);
 
 module.exports = (app) => {
   /**

@@ -1,7 +1,7 @@
-const User = require("../models/user");
+const User = require("@models/user");
 const passport = require("passport");
-require("../config/auth/passport")(passport);
-const { IssueJWT } = require("../config/auth/auth");
+require("@auth/passport")(passport);
+const { IssueJWT } = require("@auth/auth");
 
 module.exports = {
 

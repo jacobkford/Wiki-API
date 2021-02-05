@@ -8,6 +8,18 @@
     "dev": "env-cmd ./src/dev.env nodemon",
     "test": "env-cmd ./tests/test.env jest"
   },
+  "_moduleAliases": {
+    "@root": ".",
+    "@main": "src",
+    "@config": "src/config",
+    "@auth": "src/config/auth",
+    "@db": "src/config/db",
+    "@helpers": "src/config/helpers",
+    "@settings": "src/config/settings",
+    "@controllers": "src/controllers",
+    "@models": "src/models",
+    "@routes": "src/routes"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -25,6 +37,7 @@
     "helmet": "^4.4.1",
     "hpp": "^0.2.3",
     "jsonwebtoken": "^8.5.1",
+    "module-alias": "^2.2.2",
     "mongoose": "^5.11.14",
     "mongoose-findorcreate": "^3.0.0",
     "morgan": "^1.10.0",
