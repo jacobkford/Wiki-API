@@ -28,7 +28,6 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre('save', async function(next) {
-    // eslint-disable-next-line no-unused-vars
     const user = this;
     const hash = await bcrypt.hash(this.password, 10);
 

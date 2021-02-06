@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const User = require("@models/user");
 const settings = require("@settings/settings");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;

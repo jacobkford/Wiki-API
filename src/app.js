@@ -1,6 +1,5 @@
 require('module-alias/register');
 require("dotenv").config();
-const path = require("path");
 const express = require("express");
 const passport = require("passport");
 const settings = require("@settings/settings");
